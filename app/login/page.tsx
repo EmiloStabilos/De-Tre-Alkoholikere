@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { SHARED_EMAIL } from "@/lib/config";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -10,7 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const email = process.env.NEXT_PUBLIC_SHARED_EMAIL!;
+  const email = SHARED_EMAIL;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
