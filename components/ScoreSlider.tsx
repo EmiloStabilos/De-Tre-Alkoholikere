@@ -10,18 +10,10 @@ export default function ScoreSlider({
   value: number;
   onChange: (n: number) => void;
 }) {
-  const stars = Array.from({ length: 5 }).map((_, i) => {
-    const full = value >= i + 1;
-    const half = !full && value >= i + 0.5;
-    return full ? "★" : half ? "⯨" : "☆";
-  });
-
   return (
     <div>
-      <div className="mb-2 flex items-baseline justify-between">
-        <div className="text-lg tracking-widest text-amber-400">
-          {stars.join("")}
-        </div>
+      <div className="mb-2 flex items-center justify-between">
+        <Stars value={value} />
         <div className={`text-2xl font-bold tabular-nums ${scoreColor(value)}`}>
           {fmtScore(value)}
           <span className="text-sm text-stone-500">/5</span>
@@ -41,6 +33,29 @@ export default function ScoreSlider({
           <span key={n}>{n}</span>
         ))}
       </div>
+    </div>
+  );
+}
+
+// Crisp stars at any fraction: a grey ★ with an amber ★ clipped to the
+// fill percentage on top. Avoids unreliable half-star glyphs.
+function Stars({ value }: { value: number }) {
+  return (
+    <div className="flex gap-0.5 text-xl leading-none">
+      {Array.from({ length: 5 }).map((_, i) => {
+        const fill = Math.max(0, Math.min(1, value - i));
+        return (
+          <span key={i} className="relative inline-block">
+            <span className="text-stone-700">★</span>
+            <span
+              className="absolute inset-0 overflow-hidden text-amber-400"
+              style={{ width: `${fill * 100}%` }}
+            >
+              ★
+            </span>
+          </span>
+        );
+      })}
     </div>
   );
 }
