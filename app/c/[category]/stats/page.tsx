@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTaster } from "@/components/TasterProvider";
 import { fmtScore, scoreColor, scoreBg } from "@/lib/format";
-import type { Product, Rating } from "@/lib/types";
+import type { Product, Rating, Taster } from "@/lib/types";
 
 export default function StatsPage() {
   const params = useParams();
@@ -14,6 +15,7 @@ export default function StatsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<string>("all"); // "all" | taster.id
 
   useEffect(() => {
     (async () => {
@@ -38,26 +40,59 @@ export default function StatsPage() {
     })();
   }, [categoryId]);
 
-  const stats = useMemo(() => {
-    const byTaster = tasters.map((t) => {
+  const prodById = useMemo(
+    () => new Map(products.map((p) => [p.id, p])),
+    [products],
+  );
+
+  // Per-taster aggregates: average given, count, favorite (highest scored)
+  // drink, and favorite style.
+  const perTaster = useMemo(() => {
+    return tasters.map((t) => {
       const rs = ratings.filter((r) => r.taster_id === t.id);
       const avg = rs.length
         ? rs.reduce((a, r) => a + r.score, 0) / rs.length
         : null;
-      return { name: t.name, avg, count: rs.length };
+      const ranked = [...rs].sort(
+        (a, b) =>
+          b.score + (b.extra_points ?? 0) - (a.score + (a.extra_points ?? 0)),
+      );
+      const styleMap = new Map<string, number[]>();
+      rs.forEach((r) => {
+        const style = prodById.get(r.product_id)?.attributes?.style;
+        if (style) {
+          const k = String(style);
+          if (!styleMap.has(k)) styleMap.set(k, []);
+          styleMap.get(k)!.push(r.score);
+        }
+      });
+      const favStyle = Array.from(styleMap.entries())
+        .map(([style, arr]) => ({
+          style,
+          avg: arr.reduce((a, b) => a + b, 0) / arr.length,
+          count: arr.length,
+        }))
+        .filter((s) => s.count >= 2)
+        .sort((a, b) => b.avg - a.avg)[0];
+      return { taster: t, ratings: rs, avg, ranked, favStyle };
     });
+  }, [tasters, ratings, prodById]);
 
+  const overall = ratings.length
+    ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length
+    : null;
+
+  const byStyle = useMemo(() => {
     const styleMap = new Map<string, number[]>();
-    const prodById = new Map(products.map((p) => [p.id, p]));
     ratings.forEach((r) => {
-      const p = prodById.get(r.product_id);
-      const style = p?.attributes?.style ? String(p.attributes.style) : null;
+      const style = prodById.get(r.product_id)?.attributes?.style;
       if (style) {
-        if (!styleMap.has(style)) styleMap.set(style, []);
-        styleMap.get(style)!.push(r.score);
+        const k = String(style);
+        if (!styleMap.has(k)) styleMap.set(k, []);
+        styleMap.get(k)!.push(r.score);
       }
     });
-    const byStyle = Array.from(styleMap.entries())
+    return Array.from(styleMap.entries())
       .map(([style, arr]) => ({
         style,
         avg: arr.reduce((a, b) => a + b, 0) / arr.length,
@@ -65,13 +100,7 @@ export default function StatsPage() {
       }))
       .filter((s) => s.count >= 2)
       .sort((a, b) => b.avg - a.avg);
-
-    const overall = ratings.length
-      ? ratings.reduce((a, r) => a + r.score, 0) / ratings.length
-      : null;
-
-    return { byTaster, byStyle, overall };
-  }, [tasters, ratings, products]);
+  }, [ratings, prodById]);
 
   if (loading) {
     return (
@@ -82,7 +111,7 @@ export default function StatsPage() {
     return <p className="py-8 text-center text-stone-500">Ingen data endnu.</p>;
   }
 
-  const critics = [...stats.byTaster].filter((t) => t.avg != null);
+  const critics = perTaster.filter((t) => t.avg != null);
   const harshest = critics.length
     ? critics.reduce((a, b) => (a.avg! < b.avg! ? a : b))
     : null;
@@ -90,63 +119,188 @@ export default function StatsPage() {
     ? critics.reduce((a, b) => (a.avg! > b.avg! ? a : b))
     : null;
 
+  const selected = perTaster.find((p) => p.taster.id === filter) ?? null;
+  const name = (id: string) =>
+    prodById.get(id)?.name ?? "Ukendt";
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-3">
-        <Stat label="Drikke" value={String(products.length)} />
-        <Stat label="Bedømmelser" value={String(ratings.length)} />
-        <Stat
-          label="Gns. score"
-          value={fmtScore(stats.overall)}
-          color={scoreColor(stats.overall)}
-        />
+      {/* Person filter */}
+      <div className="flex flex-wrap gap-2">
+        <Chip active={filter === "all"} onClick={() => setFilter("all")}>
+          Alle
+        </Chip>
+        {tasters.map((t: Taster) => (
+          <Chip
+            key={t.id}
+            active={filter === t.id}
+            onClick={() => setFilter(t.id)}
+          >
+            {t.name}
+          </Chip>
+        ))}
       </div>
 
-      {(harshest || generous) && (
-        <div className="grid grid-cols-2 gap-3">
-          {harshest && (
-            <Highlight
-              emoji="🥶"
-              title="Hårdeste kritiker"
-              name={harshest.name}
-              value={fmtScore(harshest.avg)}
+      {selected ? (
+        /* ---------- Single person view ---------- */
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            <Stat label="Bedømt" value={String(selected.ratings.length)} />
+            <Stat
+              label="Gns. givet"
+              value={fmtScore(selected.avg)}
+              color={scoreColor(selected.avg)}
             />
-          )}
-          {generous && (
-            <Highlight
-              emoji="🤗"
-              title="Mest gavmild"
-              name={generous.name}
-              value={fmtScore(generous.avg)}
+            <Stat
+              label="Yndlingsstil"
+              value={selected.favStyle?.style ?? "–"}
+              small
             />
-          )}
-        </div>
-      )}
+          </div>
 
-      <Section title="Gennemsnit per person">
-        {stats.byTaster.map((t) => (
-          <Bar
-            key={t.name}
-            label={t.name}
-            value={t.avg}
-            sub={`${t.count} bedømt`}
-          />
-        ))}
-      </Section>
+          <Section title={`${selected.taster.name}s favoritter`}>
+            {selected.ranked.slice(0, 8).map((r, i) => (
+              <FavRow
+                key={r.id}
+                rank={i + 1}
+                href={`/c/${categoryId}/products/${r.product_id}`}
+                name={name(r.product_id)}
+                producer={prodById.get(r.product_id)?.producer ?? null}
+                score={r.score + (r.extra_points ?? 0)}
+              />
+            ))}
+          </Section>
 
-      {stats.byStyle.length > 0 && (
-        <Section title="Bedste stilarter">
-          {stats.byStyle.slice(0, 8).map((s) => (
-            <Bar
-              key={s.style}
-              label={s.style}
-              value={s.avg}
-              sub={`${s.count}★`}
+          {selected.ranked.length > 3 && (
+            <Section title={`${selected.taster.name}s bundskrabere`}>
+              {[...selected.ranked]
+                .reverse()
+                .slice(0, 3)
+                .map((r, i) => (
+                  <FavRow
+                    key={r.id}
+                    rank={selected.ranked.length - i}
+                    href={`/c/${categoryId}/products/${r.product_id}`}
+                    name={name(r.product_id)}
+                    producer={prodById.get(r.product_id)?.producer ?? null}
+                    score={r.score + (r.extra_points ?? 0)}
+                  />
+                ))}
+            </Section>
+          )}
+        </>
+      ) : (
+        /* ---------- Everyone view ---------- */
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            <Stat label="Drikke" value={String(products.length)} />
+            <Stat label="Bedømmelser" value={String(ratings.length)} />
+            <Stat
+              label="Gns. score"
+              value={fmtScore(overall)}
+              color={scoreColor(overall)}
             />
-          ))}
-        </Section>
+          </div>
+
+          {(harshest || generous) && (
+            <div className="grid grid-cols-2 gap-3">
+              {harshest && (
+                <Highlight
+                  emoji="🥶"
+                  title="Hårdeste kritiker"
+                  name={harshest.taster.name}
+                  value={fmtScore(harshest.avg)}
+                />
+              )}
+              {generous && (
+                <Highlight
+                  emoji="🤗"
+                  title="Mest gavmild"
+                  name={generous.taster.name}
+                  value={fmtScore(generous.avg)}
+                />
+              )}
+            </div>
+          )}
+
+          <Section title="Hver persons favorit">
+            {perTaster.map((p) => {
+              const fav = p.ranked[0];
+              return (
+                <button
+                  key={p.taster.id}
+                  onClick={() => setFilter(p.taster.id)}
+                  className="flex w-full items-center gap-3 rounded-xl border border-stone-800 bg-stone-900 p-3 text-left transition hover:border-amber-600"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-500 text-sm font-bold text-stone-950">
+                    {p.taster.name[0]}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs text-stone-500">
+                      {p.taster.name}s favorit
+                    </div>
+                    <div className="truncate font-semibold">
+                      {fav ? name(fav.product_id) : "Ingen endnu"}
+                    </div>
+                  </div>
+                  {fav && (
+                    <span
+                      className={`text-lg font-bold ${scoreColor(
+                        fav.score + (fav.extra_points ?? 0),
+                      )}`}
+                    >
+                      {fmtScore(fav.score + (fav.extra_points ?? 0))}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </Section>
+
+          <Section title="Gennemsnit per person">
+            {perTaster.map((p) => (
+              <Bar
+                key={p.taster.id}
+                label={p.taster.name}
+                value={p.avg}
+                sub={`${p.ratings.length} bedømt`}
+              />
+            ))}
+          </Section>
+
+          {byStyle.length > 0 && (
+            <Section title="Bedste stilarter">
+              {byStyle.slice(0, 8).map((s) => (
+                <Bar key={s.style} label={s.style} value={s.avg} sub={`${s.count}★`} />
+              ))}
+            </Section>
+          )}
+        </>
       )}
     </div>
+  );
+}
+
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+        active
+          ? "border-amber-500 bg-amber-500 text-stone-950"
+          : "border-stone-700 bg-stone-900 text-stone-300 hover:border-stone-500"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -154,14 +308,20 @@ function Stat({
   label,
   value,
   color,
+  small,
 }: {
   label: string;
   value: string;
   color?: string;
+  small?: boolean;
 }) {
   return (
     <div className="rounded-xl border border-stone-800 bg-stone-900 p-3 text-center">
-      <div className={`text-2xl font-bold tabular-nums ${color ?? ""}`}>
+      <div
+        className={`font-bold tabular-nums ${small ? "text-base" : "text-2xl"} ${
+          color ?? ""
+        }`}
+      >
         {value}
       </div>
       <div className="text-xs text-stone-500">{label}</div>
@@ -204,6 +364,40 @@ function Section({
       </h3>
       <div className="space-y-2">{children}</div>
     </div>
+  );
+}
+
+function FavRow({
+  rank,
+  href,
+  name,
+  producer,
+  score,
+}: {
+  rank: number;
+  href: string;
+  name: string;
+  producer: string | null;
+  score: number;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 rounded-xl border border-stone-800 bg-stone-900 p-3 transition hover:border-stone-600"
+    >
+      <span className="w-5 shrink-0 text-center text-sm font-bold text-stone-500">
+        {rank}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-semibold">{name}</div>
+        {producer && (
+          <div className="truncate text-xs text-stone-500">{producer}</div>
+        )}
+      </div>
+      <span className={`text-lg font-bold ${scoreColor(score)}`}>
+        {fmtScore(score)}
+      </span>
+    </Link>
   );
 }
 

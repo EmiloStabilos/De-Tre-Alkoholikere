@@ -34,7 +34,21 @@ export function TasterProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    const supabase = createClient();
+    // Initial load …
     refresh();
+    // … and reload whenever auth changes (e.g. right after the shared
+    // password login), since the first mount happens on /login while still
+    // unauthenticated and RLS would return nothing.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      // Defer to avoid awaiting inside the auth callback.
+      setTimeout(() => {
+        refresh();
+      }, 0);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   // Resolve the stored taster once the list loads.
