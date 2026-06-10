@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 export default function Sheet({
   title,
   onClose,
@@ -9,6 +11,20 @@ export default function Sheet({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  // Close on Escape and lock body scroll while open.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center sm:items-center">
       <div

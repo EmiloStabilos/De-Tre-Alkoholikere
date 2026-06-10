@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import TopBar from "@/components/TopBar";
 import { createClient } from "@/lib/supabase/client";
-import type { Category } from "@/lib/types";
+import type { Category, CategoryStats } from "@/lib/types";
 
 type CatWithStats = Category & { products: number; ratings: number };
 
@@ -15,31 +15,20 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       const supabase = createClient();
-      const [{ data: categories }, { data: products }, { data: ratings }] =
-        await Promise.all([
-          supabase.from("categories").select("*").order("sort_order"),
-          supabase.from("products").select("id, category_id"),
-          supabase.from("ratings").select("id, product_id"),
-        ]);
+      const [{ data: categories }, { data: stats }] = await Promise.all([
+        supabase.from("categories").select("*").order("sort_order"),
+        supabase.from("category_stats").select("*"),
+      ]);
 
-      const prodByCat = new Map<string, Set<string>>();
-      const prodCat = new Map<string, string>();
-      (products ?? []).forEach((p: any) => {
-        prodCat.set(p.id, p.category_id);
-        if (!prodByCat.has(p.category_id)) prodByCat.set(p.category_id, new Set());
-        prodByCat.get(p.category_id)!.add(p.id);
-      });
-      const ratingsByCat = new Map<string, number>();
-      (ratings ?? []).forEach((r: any) => {
-        const c = prodCat.get(r.product_id);
-        if (c) ratingsByCat.set(c, (ratingsByCat.get(c) ?? 0) + 1);
-      });
+      const statByCat = new Map(
+        ((stats as CategoryStats[]) ?? []).map((s) => [s.category_id, s]),
+      );
 
       setCats(
-        (categories ?? []).map((c: Category) => ({
+        ((categories as Category[]) ?? []).map((c) => ({
           ...c,
-          products: prodByCat.get(c.id)?.size ?? 0,
-          ratings: ratingsByCat.get(c.id) ?? 0,
+          products: statByCat.get(c.id)?.product_count ?? 0,
+          ratings: statByCat.get(c.id)?.rating_count ?? 0,
         })),
       );
       setLoading(false);

@@ -7,7 +7,7 @@ import Sheet from "@/components/Sheet";
 import RatingForm from "@/components/RatingForm";
 import { useTaster } from "@/components/TasterProvider";
 import { createClient } from "@/lib/supabase/client";
-import { fmtAbv, fmtScore, scoreColor } from "@/lib/format";
+import { avgRatingTotal, fmtAbv, fmtScore, scoreColor } from "@/lib/format";
 import type { Product, Rating, Taster } from "@/lib/types";
 
 export default function ProductDetail() {
@@ -36,11 +36,7 @@ export default function ProductDetail() {
     load();
   }, [load]);
 
-  const groupAvg =
-    ratings.length === 0
-      ? null
-      : ratings.reduce((a, r) => a + r.score + (r.extra_points ?? 0), 0) /
-        ratings.length;
+  const groupAvg = avgRatingTotal(ratings);
 
   const myRating = current
     ? ratings.find((r) => r.taster_id === current.id) ?? null

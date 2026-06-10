@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -19,32 +19,40 @@ export default function SessionsPage() {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     const s = await getSessions(categoryId);
     setSessions(s);
-    const supabase = createClient();
-    const { data: ratings } = await supabase
-      .from("ratings")
-      .select("session_id");
-    const c: Record<string, number> = {};
-    (ratings ?? []).forEach((r: any) => {
-      if (r.session_id) c[r.session_id] = (c[r.session_id] ?? 0) + 1;
-    });
-    setCounts(c);
+    if (s.length) {
+      const supabase = createClient();
+      const { data: ratings } = await supabase
+        .from("ratings")
+        .select("session_id")
+        .in(
+          "session_id",
+          s.map((x) => x.id),
+        );
+      const c: Record<string, number> = {};
+      ((ratings as { session_id: string }[]) ?? []).forEach((r) => {
+        c[r.session_id] = (c[r.session_id] ?? 0) + 1;
+      });
+      setCounts(c);
+    }
     setLoading(false);
-  };
+  }, [categoryId]);
 
   useEffect(() => {
     load();
-  }, [categoryId]);
+  }, [load]);
 
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     setSaving(true);
+    setError(null);
     const supabase = createClient();
-    const { data, error } = await supabase
+    const { data, error: insErr } = await supabase
       .from("sessions")
       .insert({
         category_id: categoryId,
@@ -55,13 +63,15 @@ export default function SessionsPage() {
       .select()
       .single();
     setSaving(false);
-    if (!error && data) {
-      setName("");
-      setDate("");
-      setLocation("");
-      setAdding(false);
-      load();
+    if (insErr || !data) {
+      setError("Kunne ikke oprette aftenen. Prøv igen.");
+      return;
     }
+    setName("");
+    setDate("");
+    setLocation("");
+    setAdding(false);
+    load();
   };
 
   return (
@@ -99,6 +109,7 @@ export default function SessionsPage() {
               className="flex-1 rounded-lg border border-pine-700 bg-pine-950 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
+          {error && <p className="text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             disabled={saving || !name.trim()}

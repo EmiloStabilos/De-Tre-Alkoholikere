@@ -26,9 +26,11 @@ export default function RatingForm({
     existing?.extra_points != null ? String(existing.extra_points) : "",
   );
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
     setSaving(true);
+    setError(null);
     const supabase = createClient();
     const payload = {
       product_id: productId,
@@ -41,11 +43,15 @@ export default function RatingForm({
       color_note: color.trim() || null,
     };
     // Unique (product_id, taster_id) — upsert keeps one rating per taster.
-    const { error } = await supabase
+    const { error: upsertErr } = await supabase
       .from("ratings")
       .upsert(payload, { onConflict: "product_id,taster_id" });
     setSaving(false);
-    if (!error) onSaved();
+    if (upsertErr) {
+      setError("Kunne ikke gemme bedømmelsen. Prøv igen.");
+      return;
+    }
+    onSaved();
   };
 
   return (
@@ -72,6 +78,8 @@ export default function RatingForm({
           </div>
         </div>
       </div>
+
+      {error && <p className="text-sm text-red-400">{error}</p>}
 
       <button
         onClick={save}

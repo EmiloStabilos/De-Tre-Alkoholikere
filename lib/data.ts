@@ -1,9 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type {
   Category,
-  Product,
   ProductAverage,
-  Rating,
   Session,
   Taster,
 } from "@/lib/types";
@@ -46,23 +44,4 @@ export async function getTasters(): Promise<Taster[]> {
   const supabase = createClient();
   const { data } = await supabase.from("tasters").select("*").order("sort_order");
   return (data as Taster[]) ?? [];
-}
-
-export async function getProduct(id: string): Promise<Product | null> {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-  return (data as Product) ?? null;
-}
-
-export async function getRatingsForProduct(productId: string): Promise<Rating[]> {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("ratings")
-    .select("*")
-    .eq("product_id", productId);
-  return (data as Rating[]) ?? [];
 }

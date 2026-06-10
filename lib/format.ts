@@ -24,6 +24,22 @@ export function scoreBg(n: number | null | undefined): string {
   return "bg-emerald-500";
 }
 
+// Total for a single rating: score plus any bonus points.
+export function ratingTotal(r: {
+  score: number;
+  extra_points: number | null;
+}): number {
+  return r.score + (r.extra_points ?? 0);
+}
+
+// Group average of rating totals; null when there are no ratings.
+export function avgRatingTotal(
+  rs: { score: number; extra_points: number | null }[],
+): number | null {
+  if (!rs.length) return null;
+  return rs.reduce((a, r) => a + ratingTotal(r), 0) / rs.length;
+}
+
 export function fmtAbv(n: number | null | undefined): string {
   if (n === null || n === undefined) return "";
   return `${Number(n).toFixed(1).replace(/\.0$/, "")}%`;

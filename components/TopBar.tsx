@@ -40,10 +40,14 @@ export default function TopBar() {
           </button>
 
           {open && (
-            <div
-              className="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-pine-700 bg-pine-900 shadow-xl"
-              onMouseLeave={() => setOpen(false)}
-            >
+            <>
+              {/* Backdrop so the menu also closes on tap-outside (touch has no mouseleave). */}
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setOpen(false)}
+                aria-hidden
+              />
+              <div className="absolute right-0 z-20 mt-2 w-48 overflow-hidden rounded-xl border border-pine-700 bg-pine-900 shadow-xl">
               <div className="px-3 py-2 text-xs uppercase tracking-wide text-pine-400">
                 Hvem er du?
               </div>
@@ -70,7 +74,8 @@ export default function TopBar() {
               >
                 Log ud
               </button>
-            </div>
+              </div>
+            </>
           )}
         </div>
       </div>

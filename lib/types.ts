@@ -55,6 +55,12 @@ export type Rating = {
   created_at: string;
 };
 
+export type CategoryStats = {
+  category_id: string;
+  product_count: number;
+  rating_count: number;
+};
+
 export type ProductAverage = {
   product_id: string;
   category_id: string;

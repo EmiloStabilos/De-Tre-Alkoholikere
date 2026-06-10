@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Taster } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
+import { getTasters } from "@/lib/data";
 
 type Ctx = {
   tasters: Taster[];
@@ -25,12 +26,7 @@ export function TasterProvider({ children }: { children: React.ReactNode }) {
   const [current, setCurrentState] = useState<Taster | null>(null);
 
   const refresh = async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("tasters")
-      .select("*")
-      .order("sort_order");
-    setTasters((data as Taster[]) ?? []);
+    setTasters(await getTasters());
   };
 
   useEffect(() => {

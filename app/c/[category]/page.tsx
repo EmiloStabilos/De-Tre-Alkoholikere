@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import ScoreBadge from "@/components/ScoreBadge";
-import { getLeaderboard, getProduct } from "@/lib/data";
+import { getLeaderboard } from "@/lib/data";
 import { createClient } from "@/lib/supabase/client";
 import { fmtAbv } from "@/lib/format";
 import type { Product, ProductAverage } from "@/lib/types";

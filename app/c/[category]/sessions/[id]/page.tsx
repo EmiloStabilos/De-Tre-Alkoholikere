@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import ScoreBadge from "@/components/ScoreBadge";
@@ -9,7 +9,7 @@ import RatingForm from "@/components/RatingForm";
 import AddDrinkForm from "@/components/AddDrinkForm";
 import { useTaster } from "@/components/TasterProvider";
 import { createClient } from "@/lib/supabase/client";
-import { fmtDate, fmtScore, scoreColor } from "@/lib/format";
+import { avgRatingTotal, fmtDate, fmtScore, scoreColor } from "@/lib/format";
 import type { Category, Product, Rating, Session, Taster } from "@/lib/types";
 
 type SheetState =
@@ -60,18 +60,24 @@ export default function SessionDetail() {
   }, [load]);
 
   // Distinct products in this session, ordered by group average (best first).
-  const productIds = Array.from(new Set(ratings.map((r) => r.product_id)));
-  const groupAvg = (pid: string) => {
-    const rs = ratings.filter((r) => r.product_id === pid);
-    if (!rs.length) return null;
-    return (
-      rs.reduce((a, r) => a + r.score + (r.extra_points ?? 0), 0) / rs.length
+  const { productIds, avgByProduct, ratingByKey } = useMemo(() => {
+    const byProduct = new Map<string, Rating[]>();
+    const ratingByKey = new Map<string, Rating>();
+    ratings.forEach((r) => {
+      if (!byProduct.has(r.product_id)) byProduct.set(r.product_id, []);
+      byProduct.get(r.product_id)!.push(r);
+      ratingByKey.set(`${r.product_id}:${r.taster_id}`, r);
+    });
+    const avgByProduct = new Map<string, number | null>();
+    byProduct.forEach((rs, pid) => avgByProduct.set(pid, avgRatingTotal(rs)));
+    const productIds = Array.from(byProduct.keys()).sort(
+      (a, b) => (avgByProduct.get(b) ?? 0) - (avgByProduct.get(a) ?? 0),
     );
-  };
-  productIds.sort((a, b) => (groupAvg(b) ?? 0) - (groupAvg(a) ?? 0));
+    return { productIds, avgByProduct, ratingByKey };
+  }, [ratings]);
 
   const ratingFor = (pid: string, tid: string) =>
-    ratings.find((r) => r.product_id === pid && r.taster_id === tid) ?? null;
+    ratingByKey.get(`${pid}:${tid}`) ?? null;
 
   const openRate = (pid: string) => {
     if (!current) return;
@@ -123,7 +129,7 @@ export default function SessionDetail() {
                 className="rounded-xl border border-pine-800 bg-pine-900 p-3"
               >
                 <div className="flex items-center gap-3">
-                  <ScoreBadge score={groupAvg(pid)} />
+                  <ScoreBadge score={avgByProduct.get(pid) ?? null} />
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/c/${categoryId}/products/${pid}`}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTaster } from "@/components/TasterProvider";
-import { fmtScore, scoreColor, scoreBg } from "@/lib/format";
+import { fmtScore, ratingTotal, scoreColor, scoreBg } from "@/lib/format";
 import type { Product, Rating, Taster } from "@/lib/types";
 
 export default function StatsPage() {
@@ -53,10 +53,7 @@ export default function StatsPage() {
       const avg = rs.length
         ? rs.reduce((a, r) => a + r.score, 0) / rs.length
         : null;
-      const ranked = [...rs].sort(
-        (a, b) =>
-          b.score + (b.extra_points ?? 0) - (a.score + (a.extra_points ?? 0)),
-      );
+      const ranked = [...rs].sort((a, b) => ratingTotal(b) - ratingTotal(a));
       const styleMap = new Map<string, number[]>();
       rs.forEach((r) => {
         const style = prodById.get(r.product_id)?.attributes?.style;
@@ -166,7 +163,7 @@ export default function StatsPage() {
                 href={`/c/${categoryId}/products/${r.product_id}`}
                 name={name(r.product_id)}
                 producer={prodById.get(r.product_id)?.producer ?? null}
-                score={r.score + (r.extra_points ?? 0)}
+                score={ratingTotal(r)}
               />
             ))}
           </Section>
@@ -183,7 +180,7 @@ export default function StatsPage() {
                     href={`/c/${categoryId}/products/${r.product_id}`}
                     name={name(r.product_id)}
                     producer={prodById.get(r.product_id)?.producer ?? null}
-                    score={r.score + (r.extra_points ?? 0)}
+                    score={ratingTotal(r)}
                   />
                 ))}
             </Section>
@@ -245,11 +242,9 @@ export default function StatsPage() {
                   </div>
                   {fav && (
                     <span
-                      className={`text-lg font-bold ${scoreColor(
-                        fav.score + (fav.extra_points ?? 0),
-                      )}`}
+                      className={`text-lg font-bold ${scoreColor(ratingTotal(fav))}`}
                     >
-                      {fmtScore(fav.score + (fav.extra_points ?? 0))}
+                      {fmtScore(ratingTotal(fav))}
                     </span>
                   )}
                 </button>
