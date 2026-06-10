@@ -1,11 +1,11 @@
 -- De Tre Alkoholikere — compact seed
 insert into categories (id,name,emoji,sort_order,attribute_schema) values
-  ('beer',$q$Beer$q$,$q$🍺$q$,1,$q$[{"key": "style", "label": "Style", "type": "text"}, {"key": "color", "label": "Color", "type": "text"}]$q$::jsonb),
+  ('beer',$q$Øl$q$,$q$🍺$q$,1,$q$[{"key": "style", "label": "Style", "type": "text"}, {"key": "color", "label": "Color", "type": "text"}]$q$::jsonb),
   ('vermouth',$q$Vermouth$q$,$q$🍸$q$,2,$q$[{"key": "style", "label": "Style", "type": "select", "options": ["Rosso", "Bianco", "Dry", "Amber", "Rosé"]}, {"key": "region", "label": "Region", "type": "text"}]$q$::jsonb),
-  ('wine',$q$Wine$q$,$q$🍷$q$,3,$q$[{"key": "color", "label": "Color", "type": "select", "options": ["Red", "White", "Rosé", "Orange"]}, {"key": "grape", "label": "Grape", "type": "text"}, {"key": "region", "label": "Region", "type": "text"}, {"key": "vintage", "label": "Vintage", "type": "number"}]$q$::jsonb),
-  ('sparkling',$q$Sparkling$q$,$q$🥂$q$,4,$q$[{"key": "style", "label": "Type", "type": "select", "options": ["Champagne", "Cava", "Prosecco", "Crémant", "Other"]}, {"key": "region", "label": "Region", "type": "text"}, {"key": "vintage", "label": "Vintage", "type": "number"}]$q$::jsonb),
-  ('rum',$q$Rum$q$,$q$🥃$q$,5,$q$[{"key": "region", "label": "Region", "type": "text"}, {"key": "age", "label": "Age (years)", "type": "number"}]$q$::jsonb),
-  ('whiskey',$q$Whiskey$q$,$q$🥃$q$,6,$q$[{"key": "style", "label": "Type", "type": "select", "options": ["Single Malt", "Bourbon", "Rye", "Blended", "Other"]}, {"key": "region", "label": "Region", "type": "text"}, {"key": "age", "label": "Age (years)", "type": "number"}]$q$::jsonb),
+  ('wine',$q$Vin$q$,$q$🍷$q$,3,$q$[{"key": "color", "label": "Color", "type": "select", "options": ["Red", "White", "Rosé", "Orange"]}, {"key": "grape", "label": "Grape", "type": "text"}, {"key": "region", "label": "Region", "type": "text"}, {"key": "vintage", "label": "Vintage", "type": "number"}]$q$::jsonb),
+  ('sparkling',$q$Mousserende$q$,$q$🥂$q$,4,$q$[{"key": "style", "label": "Type", "type": "select", "options": ["Champagne", "Cava", "Prosecco", "Crémant", "Other"]}, {"key": "region", "label": "Region", "type": "text"}, {"key": "vintage", "label": "Vintage", "type": "number"}]$q$::jsonb),
+  ('rum',$q$Rom$q$,$q$🥃$q$,5,$q$[{"key": "region", "label": "Region", "type": "text"}, {"key": "age", "label": "Age (years)", "type": "number"}]$q$::jsonb),
+  ('whiskey',$q$Whisky$q$,$q$🥃$q$,6,$q$[{"key": "style", "label": "Type", "type": "select", "options": ["Single Malt", "Bourbon", "Rye", "Blended", "Other"]}, {"key": "region", "label": "Region", "type": "text"}, {"key": "age", "label": "Age (years)", "type": "number"}]$q$::jsonb),
   ('gin',$q$Gin$q$,$q$🍸$q$,7,$q$[{"key": "style", "label": "Style", "type": "select", "options": ["London Dry", "Old Tom", "Navy", "Contemporary", "Other"]}, {"key": "botanicals", "label": "Botanicals", "type": "text"}]$q$::jsonb)
 on conflict (id) do nothing;
 
