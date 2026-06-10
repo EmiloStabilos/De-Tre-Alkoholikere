@@ -35,11 +35,13 @@ export default function LoginPage() {
     <main className="flex min-h-screen flex-col items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="text-6xl">🍻</div>
-          <h1 className="mt-4 text-2xl font-bold tracking-tight">
+          <div className="mx-auto grid h-24 w-24 place-items-center rounded-full border border-gold-500/40 bg-pine-900 text-5xl shadow-lg shadow-black/40">
+            🍻
+          </div>
+          <h1 className="mt-5 text-2xl font-bold tracking-tight">
             De Tre Alkoholikere
           </h1>
-          <p className="mt-2 text-sm text-stone-400">
+          <p className="mt-2 text-sm text-pine-300">
             Indtast det fælles kodeord for at smage med.
           </p>
         </div>
@@ -51,7 +53,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Fælles kodeord"
-            className="w-full rounded-xl border border-stone-700 bg-stone-900 px-4 py-3 text-center text-lg outline-none focus:border-amber-500"
+            className="w-full rounded-xl border border-pine-700 bg-pine-900 px-4 py-3 text-center text-lg outline-none focus:border-brand-400"
           />
           {error && (
             <p className="text-center text-sm text-red-400">{error}</p>
@@ -59,7 +61,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full rounded-xl bg-amber-500 py-3 font-semibold text-stone-950 transition active:scale-[0.99] disabled:opacity-50"
+            className="w-full rounded-xl bg-brand-500 py-3 font-semibold text-white transition active:scale-[0.99] disabled:opacity-50"
           >
             {loading ? "Logger ind…" : "Skål – luk mig ind"}
           </button>

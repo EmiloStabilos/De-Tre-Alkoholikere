@@ -83,19 +83,19 @@ export default function SessionDetail() {
       <div className="mb-1 flex items-center justify-between">
         <h2 className="text-xl font-bold">{session?.name ?? "…"}</h2>
       </div>
-      <p className="mb-4 text-sm text-stone-500">
+      <p className="mb-4 text-sm text-pine-400">
         {[fmtDate(session?.date), session?.location].filter(Boolean).join(" · ")}
       </p>
 
       {!current && (
-        <div className="mb-4 rounded-xl border border-amber-700/50 bg-amber-950/30 p-3 text-sm text-amber-300">
+        <div className="mb-4 rounded-xl border border-gold-500/40 bg-gold-500/10 p-3 text-sm text-gold-300">
           Vælg hvem du er (øverst til højre) for at bedømme.
         </div>
       )}
 
       <button
         onClick={() => setSheet({ mode: "add" })}
-        className="mb-5 w-full rounded-xl bg-amber-500 py-3 font-semibold text-stone-950 active:scale-[0.99]"
+        className="mb-5 w-full rounded-xl bg-brand-500 py-3 font-semibold text-white active:scale-[0.99]"
       >
         + Tilføj drik til aftenen
       </button>
@@ -105,12 +105,12 @@ export default function SessionDetail() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-xl border border-stone-800 bg-stone-900"
+              className="h-24 animate-pulse rounded-xl border border-pine-800 bg-pine-900"
             />
           ))}
         </div>
       ) : productIds.length === 0 ? (
-        <p className="py-8 text-center text-stone-500">
+        <p className="py-8 text-center text-pine-400">
           Ingen drikke endnu. Tilføj den første ovenfor.
         </p>
       ) : (
@@ -120,18 +120,18 @@ export default function SessionDetail() {
             return (
               <li
                 key={pid}
-                className="rounded-xl border border-stone-800 bg-stone-900 p-3"
+                className="rounded-xl border border-pine-800 bg-pine-900 p-3"
               >
                 <div className="flex items-center gap-3">
                   <ScoreBadge score={groupAvg(pid)} />
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/c/${categoryId}/products/${pid}`}
-                      className="block truncate font-semibold hover:text-amber-400"
+                      className="block truncate font-semibold hover:text-gold-400"
                     >
                       {p?.name ?? "…"}
                     </Link>
-                    <div className="truncate text-xs text-stone-500">
+                    <div className="truncate text-xs text-pine-400">
                       {[p?.producer, p?.attributes?.style]
                         .filter(Boolean)
                         .join(" · ")}
@@ -150,12 +150,12 @@ export default function SessionDetail() {
                         disabled={!isMe}
                         className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs ${
                           isMe
-                            ? "border-amber-600 bg-amber-950/40"
-                            : "border-stone-700 bg-stone-950"
+                            ? "border-gold-500 bg-gold-500/10"
+                            : "border-pine-700 bg-pine-950"
                         } ${!isMe ? "cursor-default" : ""}`}
                         title={isMe ? "Bedøm" : t.name}
                       >
-                        <span className="font-medium text-stone-300">
+                        <span className="font-medium text-pine-200">
                           {t.name}
                         </span>
                         {r ? (
@@ -163,7 +163,7 @@ export default function SessionDetail() {
                             {fmtScore(r.score)}
                           </span>
                         ) : (
-                          <span className="text-stone-600">
+                          <span className="text-pine-500">
                             {isMe ? "+ bedøm" : "–"}
                           </span>
                         )}

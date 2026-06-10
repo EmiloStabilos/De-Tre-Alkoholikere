@@ -7,7 +7,7 @@ export function fmtScore(n: number | null | undefined): string {
 
 // Tailwind text/bg color for a 0–5 score.
 export function scoreColor(n: number | null | undefined): string {
-  if (n === null || n === undefined) return "text-stone-400";
+  if (n === null || n === undefined) return "text-pine-400";
   if (n < 1.5) return "text-red-400";
   if (n < 2.5) return "text-orange-400";
   if (n < 3.25) return "text-yellow-400";
@@ -16,7 +16,7 @@ export function scoreColor(n: number | null | undefined): string {
 }
 
 export function scoreBg(n: number | null | undefined): string {
-  if (n === null || n === undefined) return "bg-stone-700";
+  if (n === null || n === undefined) return "bg-pine-700";
   if (n < 1.5) return "bg-red-500";
   if (n < 2.5) return "bg-orange-500";
   if (n < 3.25) return "bg-yellow-500";

@@ -51,10 +51,10 @@ export default function ProductDetail() {
 
   if (loading) {
     return (
-      <div className="h-48 animate-pulse rounded-2xl border border-stone-800 bg-stone-900" />
+      <div className="h-48 animate-pulse rounded-2xl border border-pine-800 bg-pine-900" />
     );
   }
-  if (!product) return <p className="text-stone-500">Findes ikke.</p>;
+  if (!product) return <p className="text-pine-400">Findes ikke.</p>;
 
   const attrs = product.attributes ?? {};
 
@@ -65,7 +65,7 @@ export default function ProductDetail() {
         <img
           src={product.photo_url}
           alt={product.name}
-          className="mb-4 h-56 w-full rounded-2xl border border-stone-800 object-cover"
+          className="mb-4 h-56 w-full rounded-2xl border border-pine-800 object-cover"
         />
       )}
 
@@ -74,7 +74,7 @@ export default function ProductDetail() {
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-tight">{product.name}</h2>
           {product.producer && (
-            <p className="text-stone-400">{product.producer}</p>
+            <p className="text-pine-300">{product.producer}</p>
           )}
           <div className="mt-2 flex flex-wrap gap-1.5">
             {product.abv != null && (
@@ -93,7 +93,7 @@ export default function ProductDetail() {
       <button
         onClick={() => setOpen(true)}
         disabled={!current}
-        className="mt-5 w-full rounded-xl bg-amber-500 py-3 font-semibold text-stone-950 disabled:opacity-50"
+        className="mt-5 w-full rounded-xl bg-brand-500 py-3 font-semibold text-white disabled:opacity-50"
       >
         {!current
           ? "Vælg dig for at bedømme"
@@ -102,7 +102,7 @@ export default function ProductDetail() {
             : "Tilføj din bedømmelse"}
       </button>
 
-      <h3 className="mb-2 mt-6 text-sm font-semibold uppercase tracking-wide text-stone-500">
+      <h3 className="mb-2 mt-6 text-sm font-semibold uppercase tracking-wide text-pine-400">
         Bedømmelser
       </h3>
       <div className="space-y-2">
@@ -112,9 +112,9 @@ export default function ProductDetail() {
             return (
               <div
                 key={t.id}
-                className="flex items-center gap-3 rounded-xl border border-stone-800/60 bg-stone-900/40 p-3 text-stone-600"
+                className="flex items-center gap-3 rounded-xl border border-pine-800/60 bg-pine-900/40 p-3 text-pine-500"
               >
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-stone-800 text-xs font-bold">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-pine-800 text-xs font-bold">
                   {t.name[0]}
                 </span>
                 <span className="text-sm">{t.name} — ikke bedømt</span>
@@ -123,17 +123,17 @@ export default function ProductDetail() {
           return (
             <div
               key={t.id}
-              className="rounded-xl border border-stone-800 bg-stone-900 p-3"
+              className="rounded-xl border border-pine-800 bg-pine-900 p-3"
             >
               <div className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-amber-500 text-sm font-bold text-stone-950">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-500 text-sm font-bold text-white">
                   {t.name[0]}
                 </span>
                 <span className="flex-1 font-medium">{t.name}</span>
                 <span className={`text-lg font-bold ${scoreColor(r.score)}`}>
                   {fmtScore(r.score)}
                   {r.extra_points ? (
-                    <span className="text-xs text-amber-400">
+                    <span className="text-xs text-gold-400">
                       {" "}
                       +{fmtScore(r.extra_points)}
                     </span>
@@ -141,20 +141,20 @@ export default function ProductDetail() {
                 </span>
               </div>
               {(r.taste_note || r.aroma_note || r.color_note) && (
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 pl-12 text-xs text-stone-400">
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 pl-12 text-xs text-pine-300">
                   {r.taste_note && (
                     <span>
-                      <span className="text-stone-600">Smag:</span> {r.taste_note}
+                      <span className="text-pine-500">Smag:</span> {r.taste_note}
                     </span>
                   )}
                   {r.aroma_note && (
                     <span>
-                      <span className="text-stone-600">Duft:</span> {r.aroma_note}
+                      <span className="text-pine-500">Duft:</span> {r.aroma_note}
                     </span>
                   )}
                   {r.color_note && (
                     <span>
-                      <span className="text-stone-600">Farve:</span>{" "}
+                      <span className="text-pine-500">Farve:</span>{" "}
                       {r.color_note}
                     </span>
                   )}
@@ -185,7 +185,7 @@ export default function ProductDetail() {
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-stone-700 bg-stone-950 px-2 py-0.5 text-xs text-stone-300">
+    <span className="rounded-full border border-pine-700 bg-pine-950 px-2 py-0.5 text-xs text-pine-200">
       {children}
     </span>
   );

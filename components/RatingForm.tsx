@@ -58,7 +58,7 @@ export default function RatingForm({
         <div className="grid grid-cols-2 gap-3">
           <Field label="Farve" value={color} onChange={setColor} placeholder="fx Lys" />
           <div>
-            <label className="mb-1 block text-xs text-stone-400">
+            <label className="mb-1 block text-xs text-pine-300">
               Ekstra point
             </label>
             <input
@@ -67,7 +67,7 @@ export default function RatingForm({
               value={extra}
               onChange={(e) => setExtra(e.target.value)}
               placeholder="0"
-              className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+              className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function RatingForm({
       <button
         onClick={save}
         disabled={saving}
-        className="w-full rounded-xl bg-emerald-500 py-3 font-semibold text-stone-950 disabled:opacity-50"
+        className="w-full rounded-xl bg-brand-500 py-3 font-semibold text-white disabled:opacity-50"
       >
         {saving ? "Gemmer…" : existing ? "Opdatér bedømmelse" : "Gem bedømmelse"}
       </button>
@@ -97,12 +97,12 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs text-stone-400">{label}</label>
+      <label className="mb-1 block text-xs text-pine-300">{label}</label>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+        className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
       />
     </div>
   );

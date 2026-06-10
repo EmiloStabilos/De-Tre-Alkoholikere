@@ -35,7 +35,7 @@ export default function CategoryLayout({
     <>
       <TopBar />
       <div className="mx-auto max-w-2xl px-4 pt-5">
-        <Link href="/" className="text-sm text-stone-500 hover:text-stone-300">
+        <Link href="/" className="text-sm text-pine-400 hover:text-pine-200">
           ← Alle kategorier
         </Link>
         <div className="mt-2 flex items-center gap-3">
@@ -45,15 +45,15 @@ export default function CategoryLayout({
           </h1>
         </div>
 
-        <nav className="mt-4 flex gap-1 rounded-xl border border-stone-800 bg-stone-900 p-1">
+        <nav className="mt-4 flex gap-1 rounded-xl border border-pine-800 bg-pine-900 p-1">
           {tabs.map((t) => (
             <Link
               key={t.href}
               href={t.href}
               className={`flex-1 rounded-lg px-3 py-2 text-center text-sm font-medium transition ${
                 isActive(t.href)
-                  ? "bg-amber-500 text-stone-950"
-                  : "text-stone-300 hover:bg-stone-800"
+                  ? "bg-brand-500 text-white"
+                  : "text-pine-200 hover:bg-pine-800"
               }`}
             >
               {t.label}

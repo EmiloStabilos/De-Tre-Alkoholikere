@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
         {Array.from({ length: 5 }).map((_, i) => (
           <div
             key={i}
-            className="h-16 animate-pulse rounded-xl border border-stone-800 bg-stone-900"
+            className="h-16 animate-pulse rounded-xl border border-pine-800 bg-pine-900"
           />
         ))}
       </div>
@@ -69,11 +69,11 @@ export default function LeaderboardPage() {
 
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-stone-700 p-8 text-center">
-        <p className="text-stone-400">Ingen smagninger her endnu.</p>
+      <div className="rounded-2xl border border-dashed border-pine-700 p-8 text-center">
+        <p className="text-pine-300">Ingen smagninger her endnu.</p>
         <Link
           href={`/c/${categoryId}/sessions`}
-          className="mt-3 inline-block rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-stone-950"
+          className="mt-3 inline-block rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
         >
           Start en aften
         </Link>
@@ -88,13 +88,13 @@ export default function LeaderboardPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Søg navn eller producent…"
-          className="flex-1 rounded-xl border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+          className="flex-1 rounded-xl border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
         />
         {styles.length > 0 && (
           <select
             value={style}
             onChange={(e) => setStyle(e.target.value)}
-            className="rounded-xl border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+            className="rounded-xl border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
           >
             <option value="">Alle stilarter</option>
             {styles.map((s) => (
@@ -113,21 +113,21 @@ export default function LeaderboardPage() {
             <li key={r.product_id}>
               <Link
                 href={`/c/${categoryId}/products/${r.product_id}`}
-                className="flex items-center gap-3 rounded-xl border border-stone-800 bg-stone-900 p-3 transition hover:border-stone-600 active:scale-[0.99]"
+                className="flex items-center gap-3 rounded-xl border border-pine-800 bg-pine-900 p-3 transition hover:border-pine-500 active:scale-[0.99]"
               >
-                <span className="w-6 shrink-0 text-center text-sm font-bold text-stone-500">
+                <span className="w-6 shrink-0 text-center text-sm font-bold text-pine-400">
                   {i + 1}
                 </span>
                 <ScoreBadge score={r.avg_total} />
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-semibold">{r.name}</div>
-                  <div className="truncate text-xs text-stone-500">
+                  <div className="truncate text-xs text-pine-400">
                     {[r.producer, p?.attributes?.style, fmtAbv(p?.abv)]
                       .filter(Boolean)
                       .join(" · ")}
                   </div>
                 </div>
-                <span className="shrink-0 text-xs text-stone-600">
+                <span className="shrink-0 text-xs text-pine-500">
                   {r.num_ratings}★
                 </span>
               </Link>

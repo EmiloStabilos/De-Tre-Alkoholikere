@@ -51,7 +51,7 @@ export default function Home() {
       <TopBar />
       <main className="mx-auto max-w-2xl px-4 pb-16 pt-6">
         <h1 className="text-2xl font-bold tracking-tight">Hvad smager vi i dag?</h1>
-        <p className="mt-1 text-sm text-stone-400">
+        <p className="mt-1 text-sm text-pine-300">
           Vælg en kategori for at se smagninger, ranglister og statistik.
         </p>
 
@@ -60,19 +60,19 @@ export default function Home() {
             ? Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-32 animate-pulse rounded-2xl border border-stone-800 bg-stone-900"
+                  className="h-32 animate-pulse rounded-2xl border border-pine-800 bg-pine-900"
                 />
               ))
             : cats.map((c) => (
                 <Link
                   key={c.id}
                   href={`/c/${c.id}`}
-                  className="group flex h-32 flex-col justify-between rounded-2xl border border-stone-800 bg-stone-900 p-4 transition hover:border-amber-600 active:scale-[0.98]"
+                  className="group flex h-32 flex-col justify-between rounded-2xl border border-pine-800 bg-pine-900 p-4 transition hover:border-gold-500 active:scale-[0.98]"
                 >
                   <div className="text-4xl">{c.emoji}</div>
                   <div>
                     <div className="font-semibold">{c.name}</div>
-                    <div className="text-xs text-stone-500">
+                    <div className="text-xs text-pine-400">
                       {c.products > 0
                         ? `${c.products} drikke · ${c.ratings} smag`
                         : "Ingen endnu"}

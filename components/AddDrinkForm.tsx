@@ -74,46 +74,46 @@ export default function AddDrinkForm({
   return (
     <form onSubmit={save} className="space-y-3">
       <div>
-        <label className="mb-1 block text-xs text-stone-400">Navn *</label>
+        <label className="mb-1 block text-xs text-pine-300">Navn *</label>
         <input
           autoFocus
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="fx Imperial Stout"
-          className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+          className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs text-stone-400">Producent</label>
+          <label className="mb-1 block text-xs text-pine-300">Producent</label>
           <input
             value={producer}
             onChange={(e) => setProducer(e.target.value)}
             placeholder="fx Mikkeller"
-            className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+            className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-stone-400">Alkohol %</label>
+          <label className="mb-1 block text-xs text-pine-300">Alkohol %</label>
           <input
             type="number"
             step="0.1"
             value={abv}
             onChange={(e) => setAbv(e.target.value)}
             placeholder="fx 5.6"
-            className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+            className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
           />
         </div>
       </div>
 
       {category.attribute_schema?.map((f) => (
         <div key={f.key}>
-          <label className="mb-1 block text-xs text-stone-400">{f.label}</label>
+          <label className="mb-1 block text-xs text-pine-300">{f.label}</label>
           {f.type === "select" ? (
             <select
               value={attrs[f.key] ?? ""}
               onChange={(e) => setAttr(f.key, e.target.value)}
-              className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+              className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
             >
               <option value="">–</option>
               {f.options?.map((o) => (
@@ -127,21 +127,21 @@ export default function AddDrinkForm({
               type={f.type === "number" ? "number" : "text"}
               value={attrs[f.key] ?? ""}
               onChange={(e) => setAttr(f.key, e.target.value)}
-              className="w-full rounded-lg border border-stone-700 bg-stone-900 px-3 py-2 text-sm outline-none focus:border-amber-500"
+              className="w-full rounded-lg border border-pine-700 bg-pine-900 px-3 py-2 text-sm outline-none focus:border-brand-400"
             />
           )}
         </div>
       ))}
 
       <div>
-        <label className="mb-1 block text-xs text-stone-400">
+        <label className="mb-1 block text-xs text-pine-300">
           Billede (valgfrit)
         </label>
         <input
           type="file"
           accept="image/*"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="block w-full text-sm text-stone-400 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-800 file:px-3 file:py-2 file:text-sm file:text-stone-200"
+          className="block w-full text-sm text-pine-300 file:mr-3 file:rounded-lg file:border-0 file:bg-pine-800 file:px-3 file:py-2 file:text-sm file:text-pine-200"
         />
       </div>
 
@@ -150,7 +150,7 @@ export default function AddDrinkForm({
       <button
         type="submit"
         disabled={saving || !name.trim()}
-        className="w-full rounded-xl bg-amber-500 py-3 font-semibold text-stone-950 disabled:opacity-50"
+        className="w-full rounded-xl bg-brand-500 py-3 font-semibold text-white disabled:opacity-50"
       >
         {saving ? "Gemmer…" : "Tilføj og bedøm"}
       </button>

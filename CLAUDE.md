@@ -105,7 +105,10 @@ lib/
   (`ScoreSlider`'s `Stars`). Don't use half-star unicode glyphs — they render
   inconsistently on iOS.
 - Score colours come from `scoreColor`/`scoreBg` in `lib/format.ts`.
-- Dark, mobile-first "pub" theme; amber accent; max content width `max-w-2xl`.
+- Dark, mobile-first theme with Carlsberg-inspired colours, defined as custom
+  palettes in `tailwind.config.ts`: `pine-*` (deep-green surfaces/borders/muted
+  text), `brand-*` (Carlsberg green — primary buttons and active states, white
+  text), `gold-*` (stars and highlights). Max content width `max-w-2xl`.
 - Most pages are client components (`"use client"`) fetching on mount.
 
 ## Deploy

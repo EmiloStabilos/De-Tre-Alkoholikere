@@ -104,11 +104,11 @@ export default function StatsPage() {
 
   if (loading) {
     return (
-      <div className="h-48 animate-pulse rounded-2xl border border-stone-800 bg-stone-900" />
+      <div className="h-48 animate-pulse rounded-2xl border border-pine-800 bg-pine-900" />
     );
   }
   if (ratings.length === 0) {
-    return <p className="py-8 text-center text-stone-500">Ingen data endnu.</p>;
+    return <p className="py-8 text-center text-pine-400">Ingen data endnu.</p>;
   }
 
   const critics = perTaster.filter((t) => t.avg != null);
@@ -230,13 +230,13 @@ export default function StatsPage() {
                 <button
                   key={p.taster.id}
                   onClick={() => setFilter(p.taster.id)}
-                  className="flex w-full items-center gap-3 rounded-xl border border-stone-800 bg-stone-900 p-3 text-left transition hover:border-amber-600"
+                  className="flex w-full items-center gap-3 rounded-xl border border-pine-800 bg-pine-900 p-3 text-left transition hover:border-gold-500"
                 >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-500 text-sm font-bold text-stone-950">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-500 text-sm font-bold text-white">
                     {p.taster.name[0]}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs text-stone-500">
+                    <div className="text-xs text-pine-400">
                       {p.taster.name}s favorit
                     </div>
                     <div className="truncate font-semibold">
@@ -295,8 +295,8 @@ function Chip({
       onClick={onClick}
       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
         active
-          ? "border-amber-500 bg-amber-500 text-stone-950"
-          : "border-stone-700 bg-stone-900 text-stone-300 hover:border-stone-500"
+          ? "border-brand-500 bg-brand-500 text-white"
+          : "border-pine-700 bg-pine-900 text-pine-200 hover:border-pine-400"
       }`}
     >
       {children}
@@ -316,7 +316,7 @@ function Stat({
   small?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-stone-800 bg-stone-900 p-3 text-center">
+    <div className="rounded-xl border border-pine-800 bg-pine-900 p-3 text-center">
       <div
         className={`font-bold tabular-nums ${small ? "text-base" : "text-2xl"} ${
           color ?? ""
@@ -324,7 +324,7 @@ function Stat({
       >
         {value}
       </div>
-      <div className="text-xs text-stone-500">{label}</div>
+      <div className="text-xs text-pine-400">{label}</div>
     </div>
   );
 }
@@ -341,11 +341,11 @@ function Highlight({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-stone-800 bg-stone-900 p-3">
+    <div className="rounded-xl border border-pine-800 bg-pine-900 p-3">
       <div className="text-2xl">{emoji}</div>
-      <div className="mt-1 text-xs text-stone-500">{title}</div>
+      <div className="mt-1 text-xs text-pine-400">{title}</div>
       <div className="font-semibold">{name}</div>
-      <div className="text-sm text-stone-400">gns. {value}</div>
+      <div className="text-sm text-pine-300">gns. {value}</div>
     </div>
   );
 }
@@ -359,7 +359,7 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-stone-500">
+      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-pine-400">
         {title}
       </h3>
       <div className="space-y-2">{children}</div>
@@ -383,15 +383,15 @@ function FavRow({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-xl border border-stone-800 bg-stone-900 p-3 transition hover:border-stone-600"
+      className="flex items-center gap-3 rounded-xl border border-pine-800 bg-pine-900 p-3 transition hover:border-pine-500"
     >
-      <span className="w-5 shrink-0 text-center text-sm font-bold text-stone-500">
+      <span className="w-5 shrink-0 text-center text-sm font-bold text-pine-400">
         {rank}
       </span>
       <div className="min-w-0 flex-1">
         <div className="truncate font-semibold">{name}</div>
         {producer && (
-          <div className="truncate text-xs text-stone-500">{producer}</div>
+          <div className="truncate text-xs text-pine-400">{producer}</div>
         )}
       </div>
       <span className={`text-lg font-bold ${scoreColor(score)}`}>
@@ -412,17 +412,17 @@ function Bar({
 }) {
   const pct = value != null ? (value / 5) * 100 : 0;
   return (
-    <div className="rounded-xl border border-stone-800 bg-stone-900 p-3">
+    <div className="rounded-xl border border-pine-800 bg-pine-900 p-3">
       <div className="mb-1.5 flex items-baseline justify-between">
         <span className="font-medium">{label}</span>
         <span className="text-sm">
           <span className={`font-bold ${scoreColor(value)}`}>
             {fmtScore(value)}
           </span>
-          {sub && <span className="ml-2 text-xs text-stone-600">{sub}</span>}
+          {sub && <span className="ml-2 text-xs text-pine-500">{sub}</span>}
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-stone-800">
+      <div className="h-2 overflow-hidden rounded-full bg-pine-800">
         <div
           className={`h-full rounded-full ${scoreBg(value)}`}
           style={{ width: `${pct}%` }}

@@ -16,12 +16,12 @@ export default function Sheet({
         onClick={onClose}
         aria-hidden
       />
-      <div className="relative z-50 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-stone-800 bg-stone-950 p-5 sm:rounded-2xl">
+      <div className="relative z-50 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-pine-800 bg-pine-950 p-5 sm:rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">{title}</h2>
           <button
             onClick={onClose}
-            className="grid h-8 w-8 place-items-center rounded-full bg-stone-800 text-stone-400"
+            className="grid h-8 w-8 place-items-center rounded-full bg-pine-800 text-pine-300"
           >
             ✕
           </button>
